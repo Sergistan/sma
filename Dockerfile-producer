@@ -1,0 +1,5 @@
+FROM openjdk:17-jdk-slim
+EXPOSE 8080
+ADD KafkaProducer-for-SMA/build/libs/KafkaProducer-for-SMA-0.0.1-SNAPSHOT.jar KafkaProducer-for-SMA.jar
+CMD ["java", "-jar", "KafkaProducer-for-SMA.jar"]
+

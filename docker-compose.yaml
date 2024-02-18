@@ -1,0 +1,171 @@
+version: '3'
+#не работает ликвид - проблема из-за изменения таблицы
+#проверить как будет работать минио по отдельности запущенной кафки и приложений
+#разобраться как подключить минио
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  db-data:
+    driver: local
+  changelog:
+    driver: local
+  minio-data:
+    driver: local
+  cache:
+    driver: local
+  kafka-data:
+    driver: local
+  zookeeper-data:
+    driver: local
+  kafdrop-data:
+    driver: local
+
+services:
+  producer_app:
+    build:
+      dockerfile: Dockerfile-producer
+    container_name: KafkaProducer-for-SMA
+    networks:
+      - app-network
+    depends_on:
+      - zookeeper
+      - kafka
+      - kafdrop
+      - db
+      - redis
+      - minio
+    env_file:
+      - .env
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB_NAME}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_LIQUIBASE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB_NAME}
+      SPRING_LIQUIBASE_USER: ${POSTGRES_USERNAME}
+      SPRING_LIQUIBASE_PASSWORD: ${POSTGRES_PASSWORD}
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: ${KAFKA_BOOTSTRAP_SERVERS}
+    ports:
+      - '8080:8080'
+
+  consumer_app:
+    build:
+      dockerfile: Dockerfile-consumer
+    container_name: KafkaConsumer-for-SMA
+    networks:
+      - app-network
+    depends_on:
+      - zookeeper
+      - kafka
+      - kafdrop
+      - producer_app
+      - db
+      - redis
+      - minio
+    env_file:
+      - .env
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB_NAME}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_LIQUIBASE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB_NAME}
+      SPRING_LIQUIBASE_USER: ${POSTGRES_USERNAME}
+      SPRING_LIQUIBASE_PASSWORD: ${POSTGRES_PASSWORD}
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: ${KAFKA_BOOTSTRAP_SERVERS}
+    ports:
+      - '8081:8081'
+
+  db:
+    image: postgres:15.1-alpine
+    container_name: postgres
+    networks:
+      - app-network
+    environment:
+      POSTGRES_USER: ${POSTGRES_USERNAME}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB_NAME}
+    volumes:
+      - changelog:/resources/db/changelog
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+
+  redis:
+    image: redis:7.2-rc-alpine
+    restart: always
+    container_name: redis
+    networks:
+      - app-network
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - cache:/data
+
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    networks:
+      - app-network
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY}
+#      MINIO_SERVER_URL: ${MINIO_URL}
+    command: minio server /data/minio --console-address ':9090'
+    ports:
+      - '9000:9000'
+      - '9090:9090'
+    volumes:
+      - minio-data:/data/minio
+
+  zookeeper:
+    image: zookeeper:3.7.2
+    container_name: zookeeper
+    restart: "no"
+    networks:
+      - app-network
+    ports:
+      - "2181:2181"
+    volumes:
+      - zookeeper-data:/var/lib/zookeeper/data
+
+  kafka:
+    image: obsidiandynamics/kafka
+    container_name: kafka
+    restart: "no"
+    networks:
+      - app-network
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: DOCKER_INTERNAL:PLAINTEXT,DOCKER_EXTERNAL:PLAINTEXT
+      KAFKA_LISTENERS: DOCKER_INTERNAL://:29092,DOCKER_EXTERNAL://:9092
+      KAFKA_ADVERTISED_LISTENERS: DOCKER_INTERNAL://kafka:29092,DOCKER_EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9092
+      KAFKA_INTER_BROKER_LISTENER_NAME: DOCKER_INTERNAL
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_BROKER_ID: 1
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    depends_on:
+      - zookeeper
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+
+  kafdrop:
+    image: obsidiandynamics/kafdrop
+    container_name: kafdrop
+    restart: "no"
+    networks:
+      - app-network
+    command: --server.port=9001 --management.server.port=9001
+    ports:
+      - "9001:9000"
+    environment:
+      KAFKA_BROKERCONNECT: "kafka:29092"
+    depends_on:
+      - zookeeper
+      - kafka
+    volumes:
+      - kafdrop-data:/var/lib/kafdrop/data
