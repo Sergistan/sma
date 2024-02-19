@@ -1,7 +1,5 @@
 version: '3'
-#не работает ликвид - проблема из-за изменения таблицы
-#проверить как будет работать минио по отдельности запущенной кафки и приложений
-#разобраться как подключить минио
+
 networks:
   app-network:
     driver: bridge
@@ -95,6 +93,7 @@ services:
 
   redis:
     image: redis:7.2-rc-alpine
+    hostname: redis
     restart: always
     container_name: redis
     networks:
@@ -113,7 +112,6 @@ services:
     environment:
       MINIO_ROOT_USER: ${MINIO_ACCESS_KEY}
       MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY}
-#      MINIO_SERVER_URL: ${MINIO_URL}
     command: minio server /data/minio --console-address ':9090'
     ports:
       - '9000:9000'
