@@ -19,6 +19,8 @@ volumes:
     driver: local
   kafdrop-data:
     driver: local
+  pgadmin:
+      driver: local
 
 services:
   producer_app:
@@ -90,6 +92,22 @@ services:
       - db-data:/var/lib/postgresql/data
     ports:
       - '5432:5432'
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    networks:
+      - app-network
+    depends_on:
+      - db
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+      PGADMIN_LISTEN_PORT: ${PGADMIN_LISTEN_PORT}
+    ports:
+      - "5050:5050"
+    volumes:
+      - pgadmin:/root/.pgadmin
 
   redis:
     image: redis:7.2-rc-alpine
