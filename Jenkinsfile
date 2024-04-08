@@ -4,24 +4,26 @@ pipeline {
     stages {
         stage('Build gradle producer') {
                 steps{
-                      sh 'cd producer'
-                      sh './gradlew build'
+                      bat 'cd producer'
+                      bat './gradlew clean test'
+                      bat './gradlew build'
                 }
         }
         stage('Build gradle consumer') {
                 steps{
-                      sh 'cd consumer'
-                      sh './gradlew build'
+                      bat 'cd consumer'
+                      bat './gradlew clean test'
+                      bat './gradlew build'
                 }
         }
         stage('Build docker image producer') {
             steps{
-                    sh 'docker build -f Dockerfile-producer .'
+                    bat 'docker build -f Dockerfile-producer .'
             }
         }
         stage('Build docker image consumer') {
             steps{
-                   sh 'docker build -f Dockerfile-consumer .'
+                   bat 'docker build -f Dockerfile-consumer .'
             }
         }
     }
