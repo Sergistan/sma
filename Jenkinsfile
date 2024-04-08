@@ -1,6 +1,8 @@
 pipeline {
     agent any
-
+    tools {
+        jdk "17.0.1"
+    }
     stages {
         stage('Build gradle producer') {
                 steps{
