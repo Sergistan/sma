@@ -1,11 +1,15 @@
 pipeline {
     agent any
     stages {
-        stage('Checkout') {
+        stage('Build docker image producer') {
             steps{
-                git branch: 'main',
-                    url: 'https://github.com/Sergistan/sma.git'
-                }
+                    sh 'docker build -f Dockerfile-producer .'
+            }
+        }
+        stage('Build docker image consumer') {
+            steps{
+                   sh 'docker build -f Dockerfile-consumer .'
+            }
         }
     }
 }
