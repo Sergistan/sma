@@ -1,11 +1,6 @@
 pipeline {
     agent any
 
-    tools {
-        jdk "17"
-        gradle "8.5"
-    }
-
     stages {
         stage('Build docker image producer') {
             steps{
