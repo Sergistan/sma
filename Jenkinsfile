@@ -23,12 +23,16 @@ pipeline {
         }
         stage('Build docker image producer') {
             steps{
-                    bat 'docker build -f Dockerfile-producer .'
+                    dir('producer') {
+                    bat 'docker build .'
+                    }
             }
         }
         stage('Build docker image consumer') {
             steps{
-                   bat 'docker build -f Dockerfile-consumer .'
+                    dir('consumer') {
+                    bat 'docker build .'
+                    }
             }
         }
     }
