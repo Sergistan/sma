@@ -1,6 +1,16 @@
 pipeline {
     agent any
     stages {
+        stage('Build gradle producer') {
+                steps{
+                    dir('producer') {
+                      withGradle {
+                      bat './gradlew clean'
+                      bat './gradlew build'
+                      }
+                    }
+                }
+        }
         stage('Build gradle consumer') {
                 steps{
                     dir('consumer') {
@@ -10,6 +20,11 @@ pipeline {
                       }
                     }
                 }
+        }
+        stage('Build docker image producer') {
+            steps{
+                    bat 'docker build -f Dockerfile-producer .'
+            }
         }
         stage('Build docker image consumer') {
             steps{
