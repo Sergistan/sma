@@ -5,8 +5,8 @@ pipeline {
                 steps{
                     dir('producer') {
                       withGradle {
-                      sh './gradlew clean test'
-                      sh './gradlew build'
+                      bat './gradlew clean test'
+                      bat './gradlew build'
                       }
                     }
                 }
@@ -15,20 +15,20 @@ pipeline {
                 steps{
                     dir('consumer') {
                       withGradle {
-                      sh './gradlew clean test'
-                      sh './gradlew build'
+                      bat './gradlew clean test'
+                      bat './gradlew build'
                       }
                     }
                 }
         }
         stage('Build docker image producer') {
             steps{
-                    sh 'docker build -f Dockerfile-producer .'
+                    bat 'docker build -f Dockerfile-producer .'
             }
         }
         stage('Build docker image consumer') {
             steps{
-                   sh 'docker build -f Dockerfile-consumer .'
+                   bat 'docker build -f Dockerfile-consumer .'
             }
         }
     }
