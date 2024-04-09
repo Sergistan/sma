@@ -4,16 +4,20 @@ pipeline {
         stage('Build gradle producer') {
                 steps{
                     dir('producer') {
+                      withGradle {
                       sh './gradlew clean test'
                       sh './gradlew build'
+                      }
                     }
                 }
         }
         stage('Build gradle consumer') {
                 steps{
                     dir('consumer') {
+                      withGradle {
                       sh './gradlew clean test'
                       sh './gradlew build'
+                      }
                     }
                 }
         }
