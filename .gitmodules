@@ -1,6 +1,3 @@
-[submodule "producer"]
-	path = producer
-	url = https://github.com/Sergistan/producer
 [submodule "consumer"]
 	path = consumer
 	url = https://github.com/Sergistan/consumer
