@@ -5,7 +5,7 @@ pipeline {
                 steps{
                     dir('producer') {
                       withGradle {
-                      bat './gradlew clean test'
+                      bat './gradlew clean'
                       bat './gradlew build'
                       }
                     }
@@ -15,7 +15,7 @@ pipeline {
                 steps{
                     dir('consumer') {
                       withGradle {
-                      bat './gradlew clean test'
+                      bat './gradlew clean'
                       bat './gradlew build'
                       }
                     }
