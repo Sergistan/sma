@@ -3,26 +3,28 @@ pipeline {
     stages {
         stage('Build gradle producer') {
                 steps{
-                      cdm 'cd producer'
-                      cdm './gradlew clean test'
-                      cdm './gradlew build'
+                    dir('producer') {
+                      sh './gradlew clean test'
+                      sh './gradlew build'
+                    }
                 }
         }
         stage('Build gradle consumer') {
                 steps{
-                      cdm 'cd consumer'
-                      cdm './gradlew clean test'
-                      cdm './gradlew build'
+                    dir('consumer') {
+                      sh './gradlew clean test'
+                      sh './gradlew build'
+                    }
                 }
         }
         stage('Build docker image producer') {
             steps{
-                    cdm 'docker build -f Dockerfile-producer .'
+                    sh 'docker build -f Dockerfile-producer .'
             }
         }
         stage('Build docker image consumer') {
             steps{
-                   cdm 'docker build -f Dockerfile-consumer .'
+                   sh 'docker build -f Dockerfile-consumer .'
             }
         }
     }
