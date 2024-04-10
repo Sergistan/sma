@@ -79,7 +79,7 @@ Social Media API предоставляет собой RESTful API для соц
 
 ### Запуск приложения через Docker:
 
-1. Скачать основной проект и два подмодуля (producer и consumer), переместить producer и consumer в основной проект, выполнить `gradle -> clean -> build` для producer и consumer;
+1. Скачать основной проект и два подмодуля (KafkaProducer-for-SMA и KafkaConsumer-for-SMA), переместить подмодули в основной проект (переименовать строго в KafkaProducer-for-SMA и KafkaConsumer-for-SMA), выполнить `gradle -> clean -> build` для каждого подмодуля;
 2. Запустить `docker-compose up`.
 Автоматически создадутся все необходимые сервисы для работы приложения, в базе данных появятся стартовые пользователи и админ.
 
