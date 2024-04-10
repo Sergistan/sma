@@ -7,7 +7,7 @@ Social Media API предоставляет собой RESTful API для соц
 активности и уведомления по почте о новых постах 
 по [заранее описанной спецификации](https://github.com/Sergistan/producer/blob/main/src/main/resources/static/openapi.yaml).
 
-Проект разделен на два подпроекта: [SMA-producer](https://github.com/Sergistan/producer) и [SMA-consumer](https://github.com/Sergistan/comsumer) для взаимодействия через брокер сообщений Kafka.
+Проект разделен на два подпроекта: [SMA-producer](https://github.com/Sergistan/producer) и [SMA-consumer](https://github.com/Sergistan/consumer) для взаимодействия через брокер сообщений Kafka.
 
 ## Основные технологии:
 
