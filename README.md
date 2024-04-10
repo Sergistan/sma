@@ -5,7 +5,7 @@
 Social Media API предоставляет собой RESTful API для социальной медиа платформы позволяющей пользователям регистрироваться, 
 входить в систему, создавать посты, переписываться в чате, подписываться на других пользователей, добавлять в друзья других пользователей, получать свою ленту 
 активности и уведомления по почте о новых постах 
-по [заранее описанной спецификации](KafkaProducer-for-SMA/src/main/resources/static/openapi.yaml).
+по [заранее описанной спецификации](https://github.com/Sergistan/producer/blob/main/src/main/resources/static/openapi.yaml).
 
 Проект разделен на два подпроекта: [SMA-producer](https://github.com/Sergistan/producer) и [SMA-consumer](https://github.com/Sergistan/comsumer) для взаимодействия через брокер сообщений Kafka.
 
@@ -22,7 +22,7 @@ Social Media API предоставляет собой RESTful API для соц
 - Использован брокер сообщений Kafka для отправки сообщений между проектами SMA-producer и SMA-consumer;
 - Использовалась библиотека MailSender для оповещения пользователей;
 - Для запуска используются два Dockerfile и docker-compose;
-- С помощью [веб-страницы](KafkaProducer-for-SMA/src/main/resources/templates/start.html) осуществляется общения двух пользователей (друзей) в чате по Websocket;
+- С помощью [веб-страницы](https://github.com/Sergistan/producer/blob/main/src/main/resources/templates/start.html) осуществляется общения двух пользователей (друзей) в чате по Websocket;
 - Код покрыт Unit-тестами с использованием JUnit5, Mockito для тестирования сервисного слоя приложения;
 - Протестированы контроллеры с помощью WebMvcTest и репозитории с помощью DataJpaTest;
 - Добавлены интеграционные тесты с использованием Testcontainers для тестирования работы кэша и отправки сообщений в брокер Kafka;
